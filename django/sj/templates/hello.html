@@ -1,0 +1,17 @@
+{%extends "base.html"%}
+{% block mainbody %}
+{% ifequal user currentuser %}
+<h1>Welcome!</h1>
+{% else %}
+<h1>login, {{user}}</h1>
+{% endifequal %}
+<h1>{{hello}}</h1>
+
+<h3>{{ athlete_list|first|upper }}</h3>
+<ul>
+    {% for athlete in athlete_list %}
+    <li>{{ athlete }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
+{% include "foot.html" %}
