@@ -16,12 +16,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf.urls import url
-from . import view, testdb
+from . import view, testdb, search, searchpost
 
 urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'^$', view.hello, name='hello'),
     path('hello/', view.hello, name='hello'),
     path('hellot/', view.hellot, name='hello'),
-    url(r'^testdb/$', testdb.testdb, name= 'index'),
+    url(r'^testdb/$', testdb.testdb, name='index'),
     path('dball/', testdb.dball, name='hello'),
     url('^dbope/', testdb.dbope, name='dbope'),
+    url(r'^search-form$', search.search_form),
+    url(r'^search$', search.search),
+    url(r'^search_post$', searchpost.search_post),
 ]
