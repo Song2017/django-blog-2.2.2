@@ -95,14 +95,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     # {
-    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    #     'NAME':
+    #     'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     # },
     {
         'NAME':
         'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     # {
-    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    #     'NAME':
+    #     'django.contrib.auth.password_validation.CommonPasswordValidator',
     # },
     {
         'NAME':
@@ -152,4 +154,4 @@ WAGTAIL_SITE_NAME = "blogsite"
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
-BASE_URL = 'http://example.com'
+# BASE_URL = 'http://example.com'
