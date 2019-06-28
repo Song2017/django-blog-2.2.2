@@ -7,7 +7,7 @@ DEBUG = True
 SECRET_KEY = 'xaq_1tc$ayos+&3!6axhpvgj(qw-wts42d+m+c9%_bwr5wa88x'
 
 # SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'sjgo.online'] 
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'sjgo.online', '39.97.239.252'] 
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
