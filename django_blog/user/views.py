@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.http import HttpResponseBadRequest
-import simplejson
+import json
 import logging
 
 from .models import User
@@ -15,7 +15,7 @@ def checkemail(request):
 # Create your views here.
 def reg(request: HttpRequest):
     print(request.body, request.GET, request.POST)
-    print(simplejson.loads(request.body.decode()))
+    print(json.loads(request.body.decode()))
     try:
         # get count first last exist
         qs = User.objects.all()[1:3]
