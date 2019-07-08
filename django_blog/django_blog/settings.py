@@ -24,7 +24,7 @@ SECRET_KEY = 'ns%q(1_d6^ms8vm93q=b+7si^44!pm^3**!*h4jp@*sne%@li6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'sjgo.online']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'sjgo.online', 'www.sjgo.online', '39.97.239.252']
 
 # Application definition
 
@@ -130,5 +130,5 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
-
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
