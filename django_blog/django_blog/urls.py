@@ -16,33 +16,21 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
-from django.http import HttpResponse, JsonResponse
 
 from django.shortcuts import render
 from django.template import loader, RequestContext
+from blog.feeds import AllPostsRssFeed
 
 
 def index(request):
-    print(request, type(request))
-
-    # tpl = loader.get_template('index.html')
-    # context = {'content': 'www.test.com', 'user': 'user1'}
-    # return HttpResponse(tpl.render(context))
-    # 模板: 大字符串填空, 不适合异步
-    # return render(request, 'index.html', {
-    #     'content': 'www.test.com',
-    #     'user': 'user1'
-    # })
-
-    return render(request, 'index.html',
-                  {'nums': dict(zip('abcdef', range(6)))})
-    # return JsonResponse({'name': 'hello blog'})  # ttpResponse('hello blog')
+    return render(request, "index.html", {"nums": dict(zip("abcdef", range(6)))})
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    url(r'^index$', index),
-    url(r'^$', include('blog.urls')),
-
-    url(r'^user/', include('user.urls')),
+    path("admin/", admin.site.urls),
+    url(r"^index$", index),
+    path("", include("blog.urls")),
+    url(r"^user/", include("user.urls")),
+    path(r"", include("comments.urls")),
+    url(r"^all/rss/$", AllPostsRssFeed(), name="rss"),
 ]
