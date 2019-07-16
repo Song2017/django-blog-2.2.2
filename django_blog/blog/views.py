@@ -12,7 +12,7 @@ class IndexView(ListView):
     template_name = "blog/index.html"
     context_object_name = "post_list"
     # 指定 paginate_by 属性后开启分页功能，其值代表每一页包含多少篇文章
-    paginate_by = 2
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         """
@@ -74,7 +74,7 @@ class IndexView(ListView):
             # 此时只要获取当前页右边的连续页码号，
             # 比如分页页码列表是 [1, 2, 3, 4]，那么获取的就是 right = [2, 3]。
             # 注意这里只获取了当前页码后连续两个页码，你可以更改这个数字以获取更多页码。
-            right = page_range[page_number : page_number + 2]
+            right = page_range[page_number:page_number + 2]
 
             # 如果最右边的页码号比最后一页的页码号减去 1 还要小，
             # 说明最右边的页码号和最后一页的页码号之间还有其它页码，因此需要显示省略号，通过 right_has_more 来指示。
@@ -91,9 +91,8 @@ class IndexView(ListView):
             # 此时只要获取当前页左边的连续页码号。
             # 比如分页页码列表是 [1, 2, 3, 4]，那么获取的就是 left = [2, 3]
             # 这里只获取了当前页码后连续两个页码，你可以更改这个数字以获取更多页码。
-            left = page_range[
-                (page_number - 3) if (page_number - 3) > 0 else 0 : page_number - 1
-            ]
+            left = page_range[(page_number - 3) if (
+                page_number - 3) > 0 else 0:page_number - 1]
 
             # 如果最左边的页码号比第 2 页页码号还大，
             # 说明最左边的页码号和第 1 页的页码号之间还有其它页码，因此需要显示省略号，通过 left_has_more 来指示。
@@ -107,10 +106,9 @@ class IndexView(ListView):
         else:
             # 用户请求的既不是最后一页，也不是第 1 页，则需要获取当前页左右两边的连续页码号，
             # 这里只获取了当前页码前后连续两个页码，你可以更改这个数字以获取更多页码。
-            left = page_range[
-                (page_number - 3) if (page_number - 3) > 0 else 0 : page_number - 1
-            ]
-            right = page_range[page_number : page_number + 2]
+            left = page_range[(page_number - 3) if (
+                page_number - 3) > 0 else 0:page_number - 1]
+            right = page_range[page_number:page_number + 2]
 
             # 是否需要显示最后一页和最后一页前的省略号
             if right[-1] < total_pages - 1:
@@ -160,13 +158,11 @@ class PostDetailView(DetailView):
     def get_object(self, queryset=None):
         # 覆写 get_object 方法的目的是因为需要对 post 的 body 值进行渲染
         post = super(PostDetailView, self).get_object(queryset=None)
-        md = markdown.Markdown(
-            extensions=[
-                "markdown.extensions.extra",
-                "markdown.extensions.codehilite",
-                TocExtension(slugify=slugify),
-            ]
-        )
+        md = markdown.Markdown(extensions=[
+            "markdown.extensions.extra",
+            "markdown.extensions.codehilite",
+            TocExtension(slugify=slugify),
+        ])
         post.body = md.convert(post.body)
         post.toc = md.toc
         return post
@@ -187,15 +183,10 @@ class ArchivesView(ListView):
     context_object_name = "post_list"
 
     def get_queryset(self):
-        return (
-            super(ArchivesView, self)
-            .get_queryset()
-            .filter(
-                created_time__year=self.kwargs.get("year"),
-                created_time__month=self.kwargs.get("month"),
-            )
-            .order_by("-created_time")
-        )
+        return (super(ArchivesView, self).get_queryset().filter(
+            created_time__year=self.kwargs.get("year"),
+            created_time__month=self.kwargs.get("month"),
+        ).order_by("-created_time"))
 
 
 class CategoryView(IndexView):
@@ -254,4 +245,3 @@ def category(requ, pk):
     posts = Post.objects.filter(category=cate).order_by("-created_time")
     return render(requ, "blog/index.html", context={"post_list": posts})
 """
-
