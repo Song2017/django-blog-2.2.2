@@ -21,16 +21,9 @@ from django.shortcuts import render
 from django.template import loader, RequestContext
 from blog.feeds import AllPostsRssFeed
 
-
-def index(request):
-    return render(request, "index.html", {"nums": dict(zip("abcdef", range(6)))})
-
-
 urlpatterns = [
     path("admin/", admin.site.urls),
-    url(r"^index$", index),
     path("", include("blog.urls")),
-    url(r"^user/", include("user.urls")),
     path(r"", include("comments.urls")),
     url(r"^all/rss/$", AllPostsRssFeed(), name="rss"),
 ]
