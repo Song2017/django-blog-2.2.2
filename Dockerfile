@@ -101,13 +101,14 @@ WORKDIR /app
 # Install Supervisord. Django, Gunicorn, 
 RUN apt-get update && apt-get install -y supervisor \
     && rm -rf /var/lib/apt/lists/* \
-	&& apt-get autoremove -y \
-    && pip install -r /app/requirements.txt \
+    && chmod u+x requirement.txt \
+    && pip install -r requirement.txt
 
 # Copy the entrypoint that will generate Nginx additional configs
-RUN chmod u+x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
+RUN chmod u+x entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Run the start script, it will check for an /app/prestart.sh script (e.g. for migrations)
 # And then will start Supervisor, which in turn will start Nginx and uWSGI
-CMD ["start.sh"]
+CMD ["/app/start.sh"]

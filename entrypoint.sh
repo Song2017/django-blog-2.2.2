@@ -34,6 +34,8 @@ if [ $APP_INIT == "Init" ]; then
     echo "INFO: config supervisord ..."
     supervisord.conf /etc/supervisor/conf.d/supervisord.conf
     chmod +x start.sh
+    
+    ln -s /app/entrypoint.sh entrypoint.sh
 else
     echo "INFO: Command Mode ..."
     exec "$@"
