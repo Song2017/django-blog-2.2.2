@@ -92,23 +92,23 @@ RUN set -x \
 		&& rm -rf "$tempDir" /etc/apt/sources.list.d/temp.list; \
 	fi
 
-EXPOSE 8080 443
+#EXPOSE 8080 443
 
 # Copy web app & config file
 COPY ./web-python /app
 WORKDIR /app
 
 # Install Supervisord. Django, Gunicorn, 
+# Copy the entrypoint that will generate Nginx additional configs
 RUN apt-get update && apt-get install -y supervisor \
     && rm -rf /var/lib/apt/lists/* \
     && chmod u+x requirement.txt \
-    && pip install -r requirement.txt
-
-# Copy the entrypoint that will generate Nginx additional configs
-RUN chmod u+x entrypoint.sh
+    && pip install -r requirement.txt \
+    && chmod u+x entrypoint.sh
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Run the start script, it will check for an /app/prestart.sh script (e.g. for migrations)
 # And then will start Supervisor, which in turn will start Nginx and uWSGI
+RUN  chmod u+x /app/start.sh
 CMD ["/app/start.sh"]

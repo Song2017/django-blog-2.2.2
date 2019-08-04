@@ -3,24 +3,22 @@ set -e
 
 python --version
 pip --version
-if [ $APP_INIT == "Init" ]; then
-    echo "INFO: Init Context ..."
-    $APP_INIT = "Done"
 
+if [ -f /app/supervisord.conf ]; then
+    echo "INFO: Init Context ..."
     echo "INFO: config gunicorn ..."
     rm -f /tmp/gunicorn.sock
     touch /tmp/gunicorn.sock
-    chown www-data:www-data /tmp/gunicorn.sock
-    chmod 664 /tmp/gunicorn.sock
-    rm /etc/guncorn/guncorn.ini
-    cp guncorn.ini /etc/guncorn/guncorn.ini
+    # chown www-data:www-data /tmp/gunicorn.sock
+    chmod 777 /tmp/gunicorn.sock
+    #cp guncorn.ini /etc/guncorn/guncorn.ini
 
     echo "INFO: config nginx ..."
     # forward request and error logs to docker log collector
     ln -sf /dev/stdout /var/log/nginx/access.log 
     ln -sf /dev/stderr /var/log/nginx/error.log
     # Remove default configuration from Nginx
-    rm /etc/nginx/conf.d/default.conf
+    rm -r /etc/nginx/conf.d/default.conf
     # supervisord as daemon process
     echo "daemon off;" >> /etc/nginx/nginx.conf
     if [ -f /app/nginx.conf ]; then
@@ -30,13 +28,16 @@ if [ $APP_INIT == "Init" ]; then
     fi
     # chown app folder
     chown -R www-data:www-data /app
+    # create logs/
+    mkdir /app/logs
+    touch /app/logs/nginx.access.log
+    chmod 777 /app/logs/nginx.access.log
 
     echo "INFO: config supervisord ..."
-    supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+    mv supervisord.conf /etc/supervisor/conf.d/supervisord.conf
     chmod +x start.sh
-    
-    ln -s /app/entrypoint.sh entrypoint.sh
-else
-    echo "INFO: Command Mode ..."
-    exec "$@"
+    echo 'INFO: Init Done ...'
 fi
+echo "INFO: Command Mode ..."
+echo "$@"
+exec "$@"
