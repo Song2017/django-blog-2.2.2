@@ -9,3 +9,4 @@
 + request <-> docker container < - >   
 + Supervisord(Daemon) < - > nginx <-> gunicorn <-> django <-> blog app <-> sqlite
 3. Init blog data: http://your-url:8080/admin + admin/admin123
+4. Sample blog: http://39.97.239.252:8080/ + admin/admin123
