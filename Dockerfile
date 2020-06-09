@@ -95,8 +95,8 @@ RUN set -x \
 #EXPOSE 8080 443
 
 # Copy web app & config file
-COPY ./web-python /app
 WORKDIR /app
+COPY . /app
 
 # Install Supervisord. Django, Gunicorn, 
 # Copy the entrypoint that will generate Nginx additional configs

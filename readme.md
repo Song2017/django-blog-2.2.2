@@ -4,7 +4,7 @@
 3. Server Stack: request <-> Nginx <-> Gunicorn(Django web)
 
 # Docker
-1. Run command: ```docker run -p 8080:8080 -dit songgs/django-blog:init-sqlite```
+1. Run command: ```docker run -p 80:8080 -dit songgs/django-blog:init-sqlite```
 2. Service Stack: 
 + request <-> docker container < - >   
 + Supervisord(Daemon) < - > nginx <-> gunicorn <-> django <-> blog app <-> sqlite
