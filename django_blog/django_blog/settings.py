@@ -24,7 +24,7 @@ SECRET_KEY = 'ns%q(1_d6^ms8vm93q=b+7si^44!pm^3**!*h4jp@*sne%@li6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '39.97.239.252']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '39.97.239.252', 'sjgo.online']
 
 # Application definition
 
