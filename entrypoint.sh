@@ -38,6 +38,24 @@ if [ -f /app/supervisord.conf ]; then
     mv supervisord.conf /etc/supervisor/conf.d/supervisord.conf
     echo 'INFO: Init Done ...'
 fi
+
+# Run the start script, it will check for an /app/prestart.sh script (e.g. for migrations)
+# And then will start Supervisor, which in turn will start Nginx and Gunicorn
+PRE_START_PATH=/app/prestart.sh
+echo "Checking for script in $PRE_START_PATH"
+if [ -f $PRE_START_PATH ] ; then
+    echo "Running script $PRE_START_PATH"
+    . $PRE_START_PATH
+else
+    echo "There is no script $PRE_START_PATH"
+fi
+
+# init django app sqlite context
+cd /app/django_blog
+python manage.py migrate
+
+# Start Supervisor, with Nginx and uWSGI
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+
 echo "INFO: Command Mode ..."
 echo "$@"
-exec "$@"
