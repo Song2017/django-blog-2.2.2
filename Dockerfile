@@ -5,8 +5,6 @@ LABEL maintainer="Songgs<bensong2017@hotmail.com>"
 # Standard set up Nginx
 ENV NGINX_VERSION 1.15.8-1~stretch
 ENV NJS_VERSION   1.15.8.0.2.7-1~stretch
-#python
-ENV APP_INIT "Init"
 
 # Install nginx
 RUN set -x \
@@ -92,22 +90,16 @@ RUN set -x \
 		&& rm -rf "$tempDir" /etc/apt/sources.list.d/temp.list; \
 	fi
 
-#EXPOSE 8080 443
+EXPOSE 8080
 
 # Copy web app & config file
-WORKDIR /app
 COPY . /app
+WORKDIR /app
 
 # Install Supervisord. Django, Gunicorn, 
 # Copy the entrypoint that will generate Nginx additional configs
 RUN apt-get update && apt-get install -y supervisor vim\
     && rm -rf /var/lib/apt/lists/* \
-    && chmod u+x requirement.txt \
     && pip install -r requirement.txt \
-    && chmod u+x entrypoint.sh
 
 ENTRYPOINT ["/app/entrypoint.sh"]
-
-
-#RUN  chmod u+x /app/start.sh
-#CMD ["/app/start.sh"]
