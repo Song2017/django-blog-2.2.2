@@ -1,60 +1,54 @@
-#!/usr/bin/env bash
+#!/usr/nginx/env bash
 set -e
 
 python --version
 pip --version
 
-if [ -f /app/supervisord.conf ]; then
-    echo "INFO: Init Context ..."
-    echo "INFO: config gunicorn ..."
-    #rm -f /tmp/gunicorn.sock
-    #touch /tmp/gunicorn.sock
-    # chown www-data:www-data /tmp/gunicorn.sock
-    #chmod 777 /tmp/gunicorn.sock
-    #cp guncorn.ini /etc/guncorn/guncorn.ini
-
-    echo "INFO: config nginx ..."
-    # forward request and error logs to docker log collector
-    ln -sf /dev/stdout /var/log/nginx/access.log 
-    ln -sf /dev/stderr /var/log/nginx/error.log
-    # Remove default configuration from Nginx
-    rm -r /etc/nginx/conf.d/default.conf
-    # supervisord as daemon process
-    # echo "daemon off;" >> /etc/nginx/nginx.conf
-    if [ -f /app/nginx.conf ]; then
-        cp /app/nginx.conf /etc/nginx/nginx.conf
-        echo "daemon off;" >> /etc/nginx/nginx.conf
-    else
-        echo "INFO: nginx.conf not found ..."
-    fi
-    # chown app folder
-    chown -R www-data:www-data /app
-    # create logs/
-    mkdir /app/logs
-    touch /app/logs/nginx.access.log
-    chmod 777 /app/logs/nginx.access.log
-
-    echo "INFO: config supervisord ..."
-    mv supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-    echo 'INFO: Init Done ...'
-fi
-
-# Run the start script, it will check for an /app/prestart.sh script (e.g. for migrations)
-# And then will start Supervisor, which in turn will start Nginx and Gunicorn
-PRE_START_PATH=/app/prestart.sh
-echo "Checking for script in $PRE_START_PATH"
-if [ -f $PRE_START_PATH ] ; then
-    echo "Running script $PRE_START_PATH"
-    . $PRE_START_PATH
-else
-    echo "There is no script $PRE_START_PATH"
-fi
-
-# init django app sqlite context
+# init django
+echo "INFO: init django ..."
 cd /app/django_blog
 python manage.py migrate
 
-# Start Supervisor, with Nginx and uWSGI
+echo "INFO: config nginx ..."
+# forward request and error logs to docker log collector
+#ln -sf /dev/stdout /var/log/nginx/access.log
+#ln -sf /dev/stderr /var/log/nginx/error.log
+# Remove default configuration from Nginx
+rm -r /etc/nginx/conf.d/default.conf
+cp /app/nginx/nginx.conf /etc/nginx/nginx.conf
+echo "daemon off;" >> /etc/nginx/nginx.conf # supervisord as daemon process
+# chown app folder
+chown -R www-data:www-data /app
+## create logs/
+#mkdir /app/logs
+#touch /app/logs/nginx.access.log
+#chmod 777 /app/logs/nginx.access.log
+
+
+# Start Supervisor
+echo """
+[supervisord]
+nodaemon=true
+
+[program:guncorn]
+command=/usr/local/bin/gunicorn --workers 3 --threads 2 --bind unix:/tmp/gunicorn.sock django_blog.wsgi:application
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+directory=/app/django_blog
+autostart=true
+autorestart=true
+environment=LANG=en_US.UTF-8,LC_ALL=en_US.UTF-8
+
+[program:nginx]
+command=/usr/sbin/nginx -c /etc/nginx/nginx.conf
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+stopsignal=QUIT
+""" >/etc/supervisor/conf.d/supervisord.conf
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 
 echo "INFO: Command Mode ..."
